@@ -3,6 +3,7 @@ import "styled-components";
 export const DefaultTheme = {
   background: "#F0F2F5",
   red: "#E52E4D",
+  green: "#33CC95",
   blue: "#5429CC",
 
   blueLight: "#6933FF",

@@ -10,7 +10,8 @@ import ArrowDown from "../../assets/arrow_down.svg";
 import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { api } from "../../services/api";
+import { useContext } from "react";
+import { TransactionsContext } from "../../context/TransactionsContext";
 
 interface NewTransactionModalProps {
   isOpen: boolean;
@@ -30,7 +31,9 @@ export function NewTransactionModal({
   isOpen,
   onRequestClose,
 }: NewTransactionModalProps) {
-  const { handleSubmit, register, control, watch } =
+  const { createTransaction } = useContext(TransactionsContext);
+
+  const { handleSubmit, register, control, watch, reset } =
     useForm<NewTransactionType>({
       defaultValues: {
         amount: 0,
@@ -43,13 +46,22 @@ export function NewTransactionModal({
 
   const type = watch("type");
 
-  async function handleCreateNewTransaction(data: NewTransactionType) {
-    await api.post("/transactions", data);
-  }
+  const handleCreateNewTransaction = async (data: NewTransactionType) => {
+    await createTransaction({
+      title: data.title,
+      amount: data.amount,
+      type: data.type,
+      category: data.category,
+    });
+
+    reset();
+    onRequestClose();
+  };
 
   return (
     <ReactModal
       isOpen={isOpen}
+      onAfterOpen={() => reset()}
       onRequestClose={onRequestClose}
       overlayClassName="react-modal-overlay"
       className="react-modal-content"
